@@ -1,0 +1,8 @@
+.icon-send {
+    background-image: url('../icons/send.svg');
+}
+
+.icon {
+    background-position: center;
+    background-size: 100%;
+}
