@@ -4,7 +4,8 @@ const store = createStore({
   state: {
     user: null,
     activeChannel: null,
-    lastestMessages: {},
+    messages: {},
+    subscribeMessages: {},
   },
   mutations: {
     setUser(state, payload) {
@@ -13,8 +14,15 @@ const store = createStore({
     changeActiveChannel(state, payload) {
       state.activeChannel = payload;
     },
-    addNewLastestMessage(state, payload) {
-      state.lastestMessages[state.activeChannel.id] = payload;
+    addMessageFromDB(state, payload) {
+      console.log('New message from subscribe');
+      state.messages[payload.channelID].data.push(payload.message)
+    },
+    addMessagesFromDB(state, payload) {
+      console.log(payload);
+      state.messages[payload.channelID].data = state.messages[
+        payload.channelID
+      ].data.concat(payload.messages).reverse();;
     },
   },
   actions: {
@@ -31,6 +39,15 @@ const store = createStore({
           context.commit('setUser', JSON.parse(user));
         }
       }
+    },
+    createMessageObject(context, channels) {
+      let newObject = {};
+      channels.forEach((channel) => {
+        newObject[channel.id] = {
+          data: [],
+        };
+      });
+      context.state.messages = newObject;
     },
   },
 });

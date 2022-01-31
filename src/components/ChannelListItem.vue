@@ -81,7 +81,7 @@ export default {
               newMessageCount.value += 1;
             }
             lastestMessage.value = payload.new;
-            store.commit('addNewLastestMessage', payload.new);
+            store.commit('addMessageFromDB', {channelID: props.channel.id, message:payload.new});
           })
           .subscribe();
         if (error) throw error;
