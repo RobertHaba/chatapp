@@ -1,38 +1,60 @@
 <template>
   <li
-    class="grid grid-cols-10 items-center w-full px-2 py-4 h-20 rounded-lg gap-1 shadow-md"
-    :class="[
-      activeChannel.id === channel.id
-        ? 'bg-gradient-to-tr from-purple to-red'
-        : 'bg-mirage-200',
-    ]"
+    
     @click="changeActiveChannel"
     v-if="lastestMessage"
   >
-    <UserAvatar
-      class="col-span-2"
-      :user="{ name: lastestMessage.user, id: lastestMessage.uid }"
-    />
-    <div class="col-span-6 h-full">
-      <h2 class="text-sm font-semibold">{{ channel.name }}</h2><p
-        class="text-xs truncate"
-        :class="[activeChannel.id === channel.id ? 'text-white' : 'text-gray']"
+    <button class="relative grid grid-cols-10 items-center w-full px-2 py-4 h-20 rounded-lg gap-1 shadow-md cursor-pointer group">
+      <UserAvatar
+        class="col-span-2 z-10"
+        :user="{ name: lastestMessage.user, id: lastestMessage.uid }"
+      />
+      <div class="col-span-6 h-full z-10 text-left">
+        <h2 class="text-sm font-semibold">{{ channel.name }}</h2>
+        <p
+          class="text-xs truncate transition-colors"
+          :class="[
+            activeChannel.id === channel.id
+              ? 'text-white'
+              : 'text-gray group-hover:text-white',
+          ]"
+        >
+          <b>{{ lastestMessage.user }}</b
+          >: {{ lastestMessage.text }}
+        </p>
+      </div>
+      <div
+        class="col-span-2 h-full flex flex-col items-center z-10"
+        v-if="activeChannel.id !== channel.id"
       >
-        <b>{{lastestMessage.user}}</b>: {{ lastestMessage.text }}
-      </p>
-    </div>
-    <div
-      class="col-span-2 h-full flex flex-col items-center"
-      v-if="activeChannel.id !== channel.id"
-    >
-      <p class="text-xs mb-1" v-if="time">{{ time }}</p>
+        <p class="text-xs mb-1" v-if="time">{{ time }}</p>
+        <span
+          class="font-extrabold text-[0.7rem] rounded-tr-none bg-gradient-to-tr from-purple to-red w-6 h-6 rounded-full flex items-center justify-center"
+          v-if="newMessageCount"
+        >
+          {{ newMessageCount }}
+        </span>
+      </div>
+      <!-- Backgrounds -->
       <span
-        class="font-extrabold text-[0.7rem] rounded-tr-none bg-gradient-to-tr from-purple to-red w-6 h-6 rounded-full flex items-center justify-center"
-        v-if="newMessageCount"
+        class="absolute left-0 top-50 w-0 h-full rounded z-0 transition-all group-hover:w-full group-hover:h-full"
+        :class="[
+          activeChannel.id !== channel.id
+            ? 'bg-gradient-to-tr from-purple to-red group-hover:bg-gradient-to-tr group-hover:from-purple group-hover:to-red'
+            : 'bg-vulcan',
+        ]"
       >
-        {{ newMessageCount }}
       </span>
-    </div>
+      <span
+        class="absolute right-0 top-50 w-full h-full rounded z-0 transition-all group-hover:w-0 group-hover:h-full"
+        :class="[
+          activeChannel.id === channel.id
+            ? 'bg-gradient-to-tr from-purple to-red'
+            : 'bg-mirage-200',
+        ]"
+      >
+      </span>
+    </button>
   </li>
 </template>
 
@@ -51,7 +73,7 @@ export default {
     const activeChannel = computed(() => store.state.activeChannel);
     const lastestMessage = ref(null);
     const newMessageCount = ref(0);
-    const intervalPassingTime = ref(null)
+    const intervalPassingTime = ref(null);
     const time = ref(String);
     const getLastMessageFromDB = async () => {
       try {
@@ -63,7 +85,16 @@ export default {
           .limit(1);
         if (error) throw error;
         lastestMessage.value = data[0];
-        getLastActivity(false);
+        if (data.length > 0) {
+          getLastActivity(false);
+        } else {
+          lastestMessage.value = {
+            text: 'Nowa kategoria!',
+            uid: 'Admin',
+            user: 'Admin',
+          };
+          time.value = null
+        }
       } catch (error) {
         console.log(error);
       }
