@@ -14,12 +14,11 @@
       :user="{ name: lastestMessage.user, id: lastestMessage.uid }"
     />
     <div class="col-span-6 h-full">
-      <h2 class="text-sm font-semibold">{{ channel.name }}</h2>
-      <p
-        class="text-xs text-black-200 truncate"
+      <h2 class="text-sm font-semibold">{{ channel.name }}</h2><p
+        class="text-xs truncate"
         :class="[activeChannel.id === channel.id ? 'text-white' : 'text-gray']"
       >
-        {{ lastestMessage.text }}
+        <b>{{lastestMessage.user}}</b>: {{ lastestMessage.text }}
       </p>
     </div>
     <div
@@ -96,7 +95,7 @@ export default {
     };
     const getLastActivity = (isMsgChange) => {
       if (isMsgChange) {
-        clearInterval(intervalTimeName.value);
+        clearInterval(intervalPassingTime.value);
       }
       intervalPassingTime.value = setIntervalImmediately();
     };

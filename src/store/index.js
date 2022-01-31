@@ -1,5 +1,6 @@
 import { createStore } from 'vuex';
 import { supabase } from '../supabase/init.js';
+
 const store = createStore({
   state: {
     user: null,
@@ -32,12 +33,6 @@ const store = createStore({
         payload.name =
           userName[0].charAt(0).toUpperCase() + userName[0].slice(1);
         context.commit('setUser', payload);
-      } else {
-        const user = localStorage.getItem('newUser');
-        console.log('Getting from localStorage');
-        if (user) {
-          context.commit('setUser', JSON.parse(user));
-        }
       }
     },
     createMessageObject(context, channels) {

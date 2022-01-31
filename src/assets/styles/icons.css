@@ -2,6 +2,10 @@
     background-image: url('../icons/send.svg');
 }
 
+.icon-sign-out {
+    background-image: url('../icons/sign-out.svg');
+}
+
 .icon {
     background-position: center;
     background-size: 100%;

@@ -7,19 +7,20 @@
 </template>
 <script>
 import { computed } from 'vue';
+import store from '../store';
 
 export default {
   props: {
     user: {
       type:Object,
       default:{
-        name:'Annonymous',
-        id:'0'
+        name:store.state.user?store.state.user.name:'Anon',
+        id:store.state.user?store.state.user.id:'0'
       }
     },
   },
   setup(props) {
-    const firstLetterFromLogin = computed(() => props.user.name.charAt(0));
+    const firstLetterFromLogin = computed(() => props.user.name.charAt(0).toUpperCase());
     return {firstLetterFromLogin};
   },
 };
