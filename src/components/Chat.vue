@@ -1,6 +1,6 @@
 <template>
   <div
-    class="relative w-full bg-orange-600 bg-mirage-100 max-h-screen"
+    class="w-full bg-orange-600 bg-mirage-100 max-h-screen"
     v-if="activeChannel"
   >
     <ChatNavbar :channel="activeChannel" />
@@ -25,6 +25,7 @@ export default {
   setup() {
     const store = useStore();
     const activeChannel = computed(() => store.state.activeChannel);
+    store.dispatch('chechIfIsMobileDevice')
     return { activeChannel };
   },
 };

@@ -8,6 +8,7 @@
       @keypress.enter="handlerSendMessage"
       @keyup="checkFirstLetter"
     ></textarea>
+    {{ isMobileDevice }}
     <button class="w-6 h-6" @click="handlerSendMessage">
       <i class="flex w-6 h-6 icon icon-send"></i>
     </button>
@@ -16,7 +17,7 @@
 
 <script>
 import { supabase } from '../supabase/init';
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
 
 export default {
@@ -27,12 +28,17 @@ export default {
     const newMessage = ref('');
     const store = useStore();
     const user = store.state.user;
+    const isMobileDevice = computed(() => store.state.isMobileDevice);
     const handlerSendMessage = (e) => {
-      if (!e.shiftKey && isMessageNotEmpty()) {
+      console.log(e);
+      if (!e.shiftKey && isNotEmptyMessage() && !isMobileDevice.value) {
+        sendNewMessage();
+      }
+      else if(isMobileDevice.value && e.type !== 'keypress'){
         sendNewMessage();
       }
     };
-    const isMessageNotEmpty = () => {
+    const isNotEmptyMessage = () => {
       console.log(newMessage.value.length);
       return newMessage.value.length > 0 ? true : false;
     };
@@ -58,7 +64,7 @@ export default {
       }
     };
 
-    return { handlerSendMessage, newMessage, checkFirstLetter };
+    return { handlerSendMessage, newMessage, checkFirstLetter, isMobileDevice };
   },
 };
 </script>

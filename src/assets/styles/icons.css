@@ -6,6 +6,14 @@
     background-image: url('../icons/sign-out.svg');
 }
 
+.icon-menu-burger {
+    background-image: url('../icons/menu-burger.svg');
+}
+
+.icon-chat {
+    background-image: url('../icons/chat.svg');
+}
+
 .icon {
     background-position: center;
     background-size: 100%;

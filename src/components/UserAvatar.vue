@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex justify-center w-12 h-12 rounded-full bg-mirage-100 border-solid border-2 border-red"
+    class="flex justify-center w-6 h-6 md:w-12 md:h-12 rounded-full bg-mirage-100 border-solid border-2 border-red"
   >
     <span class="self-center text-red opacity-70 font-bold">{{firstLetterFromLogin}}</span>
   </div>

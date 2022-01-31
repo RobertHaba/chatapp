@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100vh-8rem)] p-6 overflow-y-auto" id="chatBody">
+  <div class="h-[calc(100vh-8rem)] p-2 md:p-6 overflow-y-auto" id="chatBody">
     <template v-for="message in messages" :key="message.id">
       <ChatMessage
         v-if="messages"
@@ -27,7 +27,6 @@ export default {
       () => store.state.messages[props.channel.id].data
     );
     const messages = ref(null);
-    const newMessagesCounter = ref(0);
     const getMessagesFromDB = async () => {
       if (messagesFromStore.value.length < 1) {
         console.log('Pobieram dane  z bazy - brak wiadomości w store');
@@ -54,27 +53,11 @@ export default {
     const setMessages = () => {
       messages.value = messagesFromStore.value
     };
-    const subscribeMessagesChanges = () => {
-      // if (messagesFromStore.value.length > 0 && newMessagesCounter.value > 1) {
-      //   console.log('Yeah');
-      //   messages.value.push(messagesFromStore.value[messagesFromStore.value - ]);
-      // }
-      // newMessagesCounter.value = newMessagesCounter.value + 1;
-    };
     const scrollToBottom = () => {
       const chatBody = document.querySelector('#chatBody');
       chatBody.scrollTop = chatBody.scrollHeight;
     };
 
-    watch(
-      () => messagesFromStore.value.length,
-      () => {
-        console.log('UPDATE! NEW MESSAGE');
-        if (messagesFromStore.value.length > 1) {
-          subscribeMessagesChanges();
-        }
-      }
-    );
     getMessagesFromDB();
 
     watch(

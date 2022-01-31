@@ -7,6 +7,8 @@ const store = createStore({
     activeChannel: null,
     messages: {},
     subscribeMessages: {},
+    showMenu: true,
+    isMobileDevice: false,
   },
   mutations: {
     setUser(state, payload) {
@@ -17,13 +19,19 @@ const store = createStore({
     },
     addMessageFromDB(state, payload) {
       console.log('New message from subscribe');
-      state.messages[payload.channelID].data.push(payload.message)
+      state.messages[payload.channelID].data.push(payload.message);
     },
     addMessagesFromDB(state, payload) {
       console.log(payload);
       state.messages[payload.channelID].data = state.messages[
         payload.channelID
-      ].data.concat(payload.messages).reverse();;
+      ].data
+        .concat(payload.messages)
+        .reverse();
+    },
+    toggleShowMenu(state) {
+      console.log(state.showMenu);
+      state.showMenu = !state.showMenu;
     },
   },
   actions: {
@@ -43,6 +51,12 @@ const store = createStore({
         };
       });
       context.state.messages = newObject;
+    },
+    chechIfIsMobileDevice(context) {
+      let isMobile = /iPhone|iPad|iPod|Android/i.test(
+        navigator.userAgent.toLocaleLowerCase()
+      );
+      context.state.isMobileDevice = isMobile;
     },
   },
 });

@@ -6,7 +6,7 @@
   >
     <button class="relative grid grid-cols-10 items-center w-full px-2 py-4 h-20 rounded-lg gap-1 shadow-md cursor-pointer group">
       <UserAvatar
-        class="col-span-2 z-10"
+        class="col-span-2 z-10 w-10 h-10"
         :user="{ name: lastestMessage.user, id: lastestMessage.uid }"
       />
       <div class="col-span-6 h-full z-10 text-left">
@@ -183,8 +183,13 @@ export default {
     const changeActiveChannel = () => {
       store.commit('changeActiveChannel', props.channel);
       newMessageCount.value = 0;
+      toggleShowMenu()
     };
-
+    const toggleShowMenu = ()=>{
+      if(window.innerWidth < 768){
+        store.commit('toggleShowMenu')
+      }
+    }
     getLastMessageFromDB();
     subscribeToNewMessage();
     return {
