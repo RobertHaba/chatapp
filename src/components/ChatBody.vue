@@ -22,54 +22,66 @@ export default {
     channel: Object,
   },
   setup(props) {
-    const messages = ref(null);
     const store = useStore();
-    const lastestMessages = computed(() => store.state.lastestMessages);
+    const messagesFromStore = computed(
+      () => store.state.messages[props.channel.id].data
+    );
+    const messages = ref(null);
+    const newMessagesCounter = ref(0);
     const getMessagesFromDB = async () => {
-      console.log(messages.value);
-      try {
-        const { data, error } = await supabase
-          .from('Messages')
-          .select('*')
-          .eq('channelID', props.channel.id)
-          .order('time', { ascending: false })
-          .limit(15);
-        if (error) throw error;
-        messages.value = data.reverse();
-        subscribeMessagesChanges();
-      } catch (error) {
-        console.log(error);
+      if (messagesFromStore.value.length < 1) {
+        console.log('Pobieram dane  z bazy - brak wiadomości w store');
+        try {
+          const { data, error } = await supabase
+            .from('Messages')
+            .select('*')
+            .eq('channelID', props.channel.id)
+            .order('time', { ascending: false })
+            .limit(15);
+          if (error) throw error;
+          store.commit('addMessagesFromDB', {
+            channelID: props.channel.id,
+            messages: data,
+          });
+        } catch (error) {
+          console.log(error);
+        }
+      } else {
+        console.log('Pobieram dna z Store');
       }
+      setMessages();
     };
-    
+    const setMessages = () => {
+      messages.value = messagesFromStore.value
+    };
     const subscribeMessagesChanges = () => {
-      console.log(lastestMessages.value[props.channel.id]);
-      if (
-        lastestMessages.value[props.channel.id] &&
-        lastestMessages.value[props.channel.id].channelID === props.channel.id
-      ) {
-        messages.value.push(lastestMessages.value[props.channel.id]);
-        store.commit('addNewLastestMessage', null);
-      }
+      // if (messagesFromStore.value.length > 0 && newMessagesCounter.value > 1) {
+      //   console.log('Yeah');
+      //   messages.value.push(messagesFromStore.value[messagesFromStore.value - ]);
+      // }
+      // newMessagesCounter.value = newMessagesCounter.value + 1;
     };
     const scrollToBottom = () => {
       const chatBody = document.querySelector('#chatBody');
       chatBody.scrollTop = chatBody.scrollHeight;
     };
 
+    watch(
+      () => messagesFromStore.value.length,
+      () => {
+        console.log('UPDATE! NEW MESSAGE');
+        if (messagesFromStore.value.length > 1) {
+          subscribeMessagesChanges();
+        }
+      }
+    );
     getMessagesFromDB();
+
     watch(
       () => props.channel,
       () => {
         messages.value = 0;
         getMessagesFromDB();
-      }
-    );
-    watch(
-      () => lastestMessages.value[props.channel.id],
-      () => {
-        console.log('work');
-        subscribeMessagesChanges();
       }
     );
     return { messages, scrollToBottom };

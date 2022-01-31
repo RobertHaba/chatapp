@@ -28,6 +28,7 @@ export default {
         console.log(data);
         channels.value = data;
         setDefaultActiveChannel(data[0]);
+        store.dispatch('createMessageObject',data)
       } catch (error) {
         console.log(error);
       }
