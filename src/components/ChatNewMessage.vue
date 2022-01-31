@@ -1,14 +1,21 @@
 <template>
-  <div class="h-16 bg-mirage-200 px-4 py-2 flex items-center gap-4 shadow-md">
+  <div
+    class="fixed h-16 bg-mirage-200 px-4 py-2 flex items-center gap-4 shadow-md w-full bottom-0 right-0 z-10 md:relative"
+    :class="[isShowMenuOpen && isMobileDevice ? 'w-[calc(100%-4rem)]' : '']"
+  >
+    <button class="relative w-6 h-6" @click="showEmojiList = !showEmojiList">
+      <i class="block icon icon-happy w-6 h-6 opacity-70"></i>
+    </button>
+    <ChatNewMessageEmojiList v-if="showEmojiList" :addEmojiToTextHandler="addEmojiToText"/>
     <textarea
       class="w-full resize-none h-full bg-mirage-200 text-white rounded-lg p-2 text-sm"
       maxlength="255"
       placeholder="Napisz wiadomość..."
       v-model="newMessage"
+      id="newMessageArea"
       @keypress.enter="handlerSendMessage"
       @keyup="checkFirstLetter"
     ></textarea>
-    {{ isMobileDevice }}
     <button class="w-6 h-6" @click="handlerSendMessage">
       <i class="flex w-6 h-6 icon icon-send"></i>
     </button>
@@ -19,22 +26,24 @@
 import { supabase } from '../supabase/init';
 import { computed, ref } from 'vue';
 import { useStore } from 'vuex';
+import ChatNewMessageEmojiList from './ChatNewMessageEmojiList.vue';
 
 export default {
+  components:{ChatNewMessageEmojiList},
   props: {
     channel: Object,
   },
   setup(props) {
-    const newMessage = ref('');
     const store = useStore();
     const user = store.state.user;
+    const newMessage = ref('');
+    const showEmojiList = ref(false);
+    const isShowMenuOpen = computed(() => store.state.showMenu);
     const isMobileDevice = computed(() => store.state.isMobileDevice);
     const handlerSendMessage = (e) => {
-      console.log(e);
       if (!e.shiftKey && isNotEmptyMessage() && !isMobileDevice.value) {
         sendNewMessage();
-      }
-      else if(isMobileDevice.value && e.type !== 'keypress'){
+      } else if (isMobileDevice.value && e.type !== 'keypress') {
         sendNewMessage();
       }
     };
@@ -58,13 +67,36 @@ export default {
         });
         if (error) throw error;
         newMessage.value = '';
-        console.log(data);
       } catch (error) {
         console.log(error);
       }
     };
-
-    return { handlerSendMessage, newMessage, checkFirstLetter, isMobileDevice };
+    const addEmojiToText = (emoji) => {
+      let textareaMessage = document.getElementById('newMessageArea');
+      const caretStart = textareaMessage.selectionStart;
+      newMessage.value =
+        newMessage.value.substring(0, caretStart) +
+        ' ' +
+        emoji +
+        ' ' +
+        newMessage.value.substring(caretStart);
+      showEmojiList.value = false
+      setTimeout(() => {
+        textareaMessage.focus();
+        textareaMessage.selectionStart = caretStart + 3;
+        textareaMessage.selectionEnd = caretStart + 3;
+      }, 10);
+      // Render caret position in textarea for Vue. setTimeout is important for caret work
+    };
+    return {
+      handlerSendMessage,
+      newMessage,
+      checkFirstLetter,
+      isShowMenuOpen,
+      isMobileDevice,
+      addEmojiToText,
+      showEmojiList,
+    };
   },
 };
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[calc(100vh-8rem)] p-2 md:p-6 overflow-y-auto" id="chatBody">
+  <div class="h-[calc(100vh-8rem)] p-2 pb-14 sm:p-2 md:p-6 overflow-y-auto" id="chatBody">
     <template v-for="message in messages" :key="message.id">
       <ChatMessage
         v-if="messages"

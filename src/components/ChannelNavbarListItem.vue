@@ -1,5 +1,5 @@
 <template>
-  <li class="relative h-14 cursor-pointer lg:hidden">
+  <li class="relative h-14 cursor-pointer flex items-center">
     <button
       class="flex flex-col items-center justify-center gap-1 w-full group"
       @click="handlerFunction"

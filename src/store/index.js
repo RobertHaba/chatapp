@@ -29,9 +29,9 @@ const store = createStore({
         .concat(payload.messages)
         .reverse();
     },
-    toggleShowMenu(state) {
+    toggleShowMenu(state, payload) {
       console.log(state.showMenu);
-      state.showMenu = !state.showMenu;
+      state.showMenu = (payload === true || payload === false) ? payload : !state.showMenu;
     },
   },
   actions: {

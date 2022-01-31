@@ -1,10 +1,10 @@
 <template>
-  <div class="flex text-white h-screen" v-show="showMenu">
-    <ul class="flex flex-col w-16 p-2 bg-vulcan gap-6 justify-between">
+  <div class="flex text-white h-screen z-20" v-show="showMenu">
+    <ul class="flex flex-col w-16 h-full p-2 bg-vulcan gap-6 z-20 -translate-x-full slide-to-right">
       <li
-        class="flex flex-col items-center justify-center gap-1 text-gray mt-14 md:mt-0"
+        class="flex flex-col items-center justify-center gap-1 text-gray mt-20 md:mt-0"
       >
-        <UserAvatar />
+        <UserAvatar class="w-10 h-10" />
         <p class="text-xs over truncate text-center font-semibold" v-if="user">
           {{ user.name }}
         </p>
@@ -12,9 +12,11 @@
       <ChannelNavbarListItem
         itemTitle="Czaty"
         icon="chat"
+        class="lg:hidden"
         :handlerFunction="toggleShowChannels"
       />
       <ChannelNavbarListItem
+      class="!fixed bottom-0"
         itemTitle="Wyloguj"
         icon="sign-out"
         :handlerFunction="singOutUser"
@@ -22,7 +24,7 @@
     </ul>
 
     <div
-      class="absolute top-0 left-16 flex flex-col bg-mirage-100 w-[calc(100%-4rem)] sm:w-80 h-full md:relative md:left-0 z-10"
+      class="fixed top-0 left-16 flex flex-col bg-mirage-100 w-[calc(100%-4rem)] sm:w-80 h-full md:relative md:left-0 z-10 -translate-x-full slide-to-right"
       v-show="showChannels"
     >
       <div class="h-16 mb-2 shadow-md bg-mirage-200 p-4">

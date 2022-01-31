@@ -14,6 +14,22 @@
     background-image: url('../icons/chat.svg');
 }
 
+.icon-happy {
+    background-image: url('../icons/happy.svg');
+}
+
+.icon-img-design {
+    background-image: url('../icons/design.png');
+}
+
+.icon-img-programming {
+    background-image: url('../icons/programming.png');
+}
+
+.icon-img-jobs {
+    background-image: url('../icons/jobs.png');
+}
+
 .icon {
     background-position: center;
     background-size: 100%;
