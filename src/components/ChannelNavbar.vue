@@ -4,7 +4,7 @@
       <li
         class="flex flex-col items-center justify-center gap-1 text-gray mt-20 md:mt-0"
       >
-        <UserAvatar class="w-10 h-10" />
+        <UserAvatar class="w-10 h-10" :user="{name:user.name,id:user.id}" />
         <p class="text-xs over truncate text-center font-semibold" v-if="user">
           {{ user.name }}
         </p>

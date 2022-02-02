@@ -18,6 +18,10 @@
     background-image: url('../icons/happy.svg');
 }
 
+.icon-loading {
+    background-image: url('../icons/loading.svg');
+}
+
 .icon-img-design {
     background-image: url('../icons/design.png');
 }
@@ -33,4 +37,8 @@
 .icon {
     background-position: center;
     background-size: 100%;
+}
+
+.icon-chat {
+    background-image: url('../icons/chat.svg');
 }

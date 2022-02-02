@@ -12,6 +12,10 @@ const store = createStore({
   },
   mutations: {
     setUser(state, payload) {
+      if (payload) {
+        payload.name =
+          payload.name.charAt(0).toUpperCase() + payload.name.slice(1);
+      }
       state.user = payload;
     },
     changeActiveChannel(state, payload) {
@@ -23,15 +27,20 @@ const store = createStore({
     },
     addMessagesFromDB(state, payload) {
       console.log(payload);
-      state.messages[payload.channelID].data = state.messages[
-        payload.channelID
-      ].data
-        .concat(payload.messages)
-        .reverse();
+      if (!payload.toEnd) {
+        state.messages[payload.channelID].data = state.messages[
+          payload.channelID
+        ].data
+          .concat(payload.messages)
+          .reverse();
+      } else if (payload.toEnd) {
+        state.messages[payload.channelID].data.unshift(...payload.messages.reverse())
+      }
     },
     toggleShowMenu(state, payload) {
       console.log(state.showMenu);
-      state.showMenu = (payload === true || payload === false) ? payload : !state.showMenu;
+      state.showMenu =
+        payload === true || payload === false ? payload : !state.showMenu;
     },
   },
   actions: {

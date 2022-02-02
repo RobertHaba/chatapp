@@ -1,7 +1,7 @@
 <template>
   <div
     class="w-full bg-orange-600 bg-mirage-100 max-h-screen"
-    v-if="activeChannel"
+    v-if="activeChannel && user"
   >
     <ChatNavbar :channel="activeChannel" />
     <ChatBody
@@ -26,6 +26,7 @@ export default {
     const store = useStore();
     const isMobileDevice = computed(()=>store.state.isMobileDevice)
     const activeChannel = computed(() => store.state.activeChannel);
+    const user = computed(()=>store.state.user)
     store.dispatch('chechIfIsMobileDevice')
     const handleGesture = (touchPositions)=>{
       if(touchPositions.endX + 100 < touchPositions.startX ){
@@ -48,7 +49,7 @@ export default {
     if(isMobileDevice.value){
       addGestureSupport()
     }
-    return { activeChannel };
+    return { activeChannel,user };
   },
 };
 </script>

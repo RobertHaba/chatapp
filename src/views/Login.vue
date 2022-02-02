@@ -145,11 +145,12 @@ export default {
     };
     const signInUser = async () => {
       try {
-        const { error } = await supabase.auth.signIn({
+        const {session, error } = await supabase.auth.signIn({
           email: user.value.name + '@email.pl',
           password: user.value.password,
         });
         if (error) throw error;
+        user.value.id = session.user.id;
         setUserInStore(user.value);
         setUserInLocalStorage(user.value);
         changeRouterToChatApp();

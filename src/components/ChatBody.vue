@@ -36,7 +36,8 @@ export default {
     const msgRange = ref({ start: 0, end: 15 });
     const loading = ref(true);
     const loadingMore = ref(false);
-    const scrollProperty = ref({now:0,last:0});
+    const chatBody = ref(null);
+    const scrollProperty = ref({ now: 0, last: 0 });
     const getMessagesFromDB = async (getMore) => {
       if (messagesFromStore.value.length < 1 || getMore) {
         console.log('Pobieram dane  z bazy - brak wiadomości w store');
@@ -65,7 +66,7 @@ export default {
       messages.value = messagesFromStore.value;
     };
     const scrollToBottom = () => {
-      chatBody.scrollTop = chatBody.scrollHeight;
+      chatBody.value.scrollTop = chatBody.value.scrollHeight;
     };
     const handlerLoadMore = (loadMore) => {
       if (!loadMore) {
@@ -74,25 +75,26 @@ export default {
         console.log(scrollProperty.value);
         loadingMore.value = false;
         const checkForDOMLoad = setInterval(() => {
-          if (chatBody.children.length === messages.value.length) {
-            chatBody.scrollTop = scrollProperty.value.now - scrollProperty.value.last;
-            scrollProperty.value.last = scrollProperty.value.now
+          if (chatBody.value.children.length === messages.value.length) {
+            chatBody.value.scrollTop =
+              scrollProperty.value.now - scrollProperty.value.last;
+            scrollProperty.value.last = scrollProperty.value.now;
             clearInterval(checkForDOMLoad);
           }
         }, 50);
-        console.log(chatBody.scrollTop);
-        console.log(chatBody.scrollHeight);
+        console.log(chatBody.value.scrollTop);
+        console.log(chatBody.value.scrollHeight);
       }
     };
     const watchForScrollToTop = () => {
-      console.log(chatBody);
-      chatBody.addEventListener('scroll', (e) => {
+      chatBody.value.addEventListener('scroll', (e) => {
         if (e.target.scrollTop < 200) {
           if (!loadingMore.value) {
             console.log(e.target.scrollTop);
             console.log(e.target.offsetHeight);
             loadingMore.value = true;
-            scrollProperty.value.now = e.target.scrollHeight  + e.target.scrollTop;
+            scrollProperty.value.now =
+              e.target.scrollHeight + e.target.scrollTop;
             loadMoreMessages();
           }
         }
@@ -105,7 +107,6 @@ export default {
       msgRange.value.end = allMsgLength + 15;
       getMessagesFromDB(true);
     };
-    getMessagesFromDB();
 
     watch(
       () => props.channel,
@@ -115,7 +116,8 @@ export default {
       }
     );
     onMounted(() => {
-      const chatBody = document.querySelector('#chatBody');
+      chatBody.value = document.querySelector('#chatBody');
+      getMessagesFromDB();
     });
     return { messages, scrollToBottom, loading };
   },
