@@ -21,7 +21,11 @@
     </div>
     <div
       class="fixed py-2 px-8 w-60 inset-x-0 mx-auto bottom-20 bg-vulcan text-gray rounded-lg text-sm flex gap-4 translate-y-full slide-to-top"
-      v-if="isNewMessage.status && isNewMessage.channel === channel.id && scrollProperty.isActive"
+      v-if="
+        isNewMessage.status &&
+        isNewMessage.channel === channel.id &&
+        scrollProperty.isActive
+      "
     >
       <button
         @click="scrollToBottom(true), changeIsNewMessageToFalse"
@@ -54,24 +58,27 @@ export default {
   },
   setup(props) {
     const store = useStore();
+    // Messages
     const messagesFromStore = computed(
       () => store.state.messages[props.channel.id].data
     );
     const messages = ref(null);
     const msgRange = ref({ start: 0, end: 15 }); // For getting from DB
+    // Status
     const loading = ref(true);
     const loadingMore = ref(false);
     const isMessagesFromFirstGet = ref(true);
     const isNewMessage = computed(() => store.state.isNewMessage);
-    const chatBody = ref(null);
     const scrollProperty = ref({
       heightLast: 0,
       heightNow: 0,
       isActive: false,
     });
+    // DOM
+    const chatBodyDOM = ref(null);
+
     const getMessagesFromDB = async (getMore = false) => {
       if (messagesFromStore.value.length < 1 || getMore) {
-        console.log('Pobieram dane  z bazy - brak wiadomości w store');
         try {
           const { data, error } = await supabase
             .from('Messages')
@@ -103,20 +110,19 @@ export default {
     const scrollToBottom = (isNewMsg = false) => {
       if (isNewMsg || !scrollProperty.value.isActive) {
         console.log('WORK');
-        chatBody.value.scrollTop = chatBody.value.scrollHeight;
+        chatBodyDOM.value.scrollTop = chatBodyDOM.value.scrollHeight;
         scrollProperty.value.isActive = false;
         changeIsNewMessageToFalse();
       }
     };
     const handlerLoadMore = (loadMore) => {
       if (!loadMore) {
-        watchForScrollToTop();
+        watchForScrollMove();
       } else {
-        console.log(scrollProperty.value);
         loadingMore.value = false;
         const checkForDOMLoad = setInterval(() => {
-          if (chatBody.value.children.length === messages.value.length) {
-            chatBody.value.scrollTop =
+          if (chatBodyDOM.value.children.length === messages.value.length) {
+            chatBodyDOM.value.scrollTop =
               scrollProperty.value.heightNow - scrollProperty.value.heightLast;
             scrollProperty.value.heightLast = scrollProperty.value.heightNow;
             clearInterval(checkForDOMLoad);
@@ -124,26 +130,21 @@ export default {
         }, 5);
       }
     };
-    const watchForScrollToTop = () => {
-      chatBody.value.addEventListener('scroll', (e) => {
+    const watchForScrollMove = () => {
+      chatBodyDOM.value.addEventListener('scroll', (e) => {
         if (
           e.target.scrollTop <
           e.target.scrollHeight - e.target.offsetHeight - 50
         ) {
-          console.log(scrollProperty.value.isActive);
           scrollProperty.value.isActive = true;
         } else {
-          console.log('ZMIANA');
           scrollProperty.value.isActive = false;
-          console.log(scrollProperty.value.isActive);
           changeIsNewMessageToFalse();
         }
-        if (e.target.scrollTop < 100) {
-          if (!loadingMore.value) {
-            loadingMore.value = true;
-            scrollProperty.value.heightNow = e.target.scrollHeight;
-            loadMoreMessages();
-          }
+        if (e.target.scrollTop < 100 && !loadingMore.value) {
+          loadingMore.value = true;
+          scrollProperty.value.heightNow = e.target.scrollHeight;
+          loadMoreMessages();
         }
       });
     };
@@ -162,7 +163,7 @@ export default {
       }
     );
     onMounted(() => {
-      chatBody.value = document.querySelector('#chatBody');
+      chatBodyDOM.value = document.querySelector('#chatBody');
       getMessagesFromDB();
     });
     return {
