@@ -9,7 +9,7 @@ const store = createStore({
     subscribeMessages: {},
     showMenu: true,
     isMobileDevice: false,
-    isNewMessage: false,
+    isNewMessage: {status:false,channel:null},
   },
   mutations: {
     setUser(state, payload) {

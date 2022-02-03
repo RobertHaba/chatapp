@@ -117,7 +117,7 @@ export default {
               channelID: props.channel.id,
               message: payload.new,
             });
-            store.dispatch('handlerIsNewMessage', true);
+            store.dispatch('handlerIsNewMessage', {status:true, channel:props.channel.id});
             getLastActivity(true);
           })
           .subscribe();

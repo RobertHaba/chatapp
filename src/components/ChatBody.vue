@@ -8,7 +8,7 @@
         <ChatMessage
           v-if="!loading"
           :message="message"
-          :isFromFirstGet="isFromFirstGet"
+          :isMessagesFromFirstGet="isMessagesFromFirstGet"
           :scrollToBottomFunction="scrollToBottom"
         />
       </template>
@@ -21,7 +21,7 @@
     </div>
     <div
       class="fixed py-2 px-8 w-60 inset-x-0 mx-auto bottom-20 bg-vulcan text-gray rounded-lg text-sm flex gap-4 translate-y-full slide-to-top"
-      v-if="isNewMessage && scrollProperty.isActive"
+      v-if="isNewMessage.status && isNewMessage.channel === channel.id && scrollProperty.isActive"
     >
       <button
         @click="scrollToBottom(true), changeIsNewMessageToFalse"
@@ -58,10 +58,10 @@ export default {
       () => store.state.messages[props.channel.id].data
     );
     const messages = ref(null);
-    const msgRange = ref({ start: 0, end: 15 });
+    const msgRange = ref({ start: 0, end: 15 }); // For getting from DB
     const loading = ref(true);
     const loadingMore = ref(false);
-    const isFromFirstGet = ref(true);
+    const isMessagesFromFirstGet = ref(true);
     const isNewMessage = computed(() => store.state.isNewMessage);
     const chatBody = ref(null);
     const scrollProperty = ref({
@@ -85,7 +85,7 @@ export default {
             messages: data,
             toEnd: getMore,
           });
-          isFromFirstGet.value = !getMore;
+          isMessagesFromFirstGet.value = !getMore;
         } catch (error) {
           console.log(error);
         }
@@ -149,7 +149,6 @@ export default {
     };
     const loadMoreMessages = () => {
       const allMsgLength = messages.value.length;
-      console.log(allMsgLength);
       msgRange.value.start = allMsgLength;
       msgRange.value.end = allMsgLength + 15;
       getMessagesFromDB(true);
@@ -170,7 +169,7 @@ export default {
       messages,
       loading,
       scrollToBottom,
-      isFromFirstGet,
+      isMessagesFromFirstGet,
       scrollProperty,
       isNewMessage,
       changeIsNewMessageToFalse,
