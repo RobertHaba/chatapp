@@ -23,11 +23,9 @@ const store = createStore({
       state.activeChannel = payload;
     },
     addMessageFromDB(state, payload) {
-      console.log('New message from subscribe');
       state.messages[payload.channelID].data.push(payload.message);
     },
     addMessagesFromDB(state, payload) {
-      console.log(payload);
       if (!payload.toEnd) {
         state.messages[payload.channelID].data = state.messages[
           payload.channelID
@@ -41,7 +39,6 @@ const store = createStore({
       }
     },
     toggleShowMenu(state, payload) {
-      console.log(state.showMenu);
       state.showMenu =
         payload === true || payload === false ? payload : !state.showMenu;
     },

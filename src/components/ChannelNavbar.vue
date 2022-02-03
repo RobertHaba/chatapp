@@ -1,10 +1,15 @@
 <template>
   <div class="flex text-white h-screen z-20" v-show="showMenu">
-    <ul class="flex flex-col w-16 h-full p-2 bg-vulcan gap-6 z-20 -translate-x-full slide-to-right">
+    <ul
+      class="flex flex-col w-16 h-full p-2 bg-vulcan gap-6 z-20 -translate-x-full slide-to-right"
+    >
       <li
         class="flex flex-col items-center justify-center gap-1 text-gray mt-20 md:mt-0"
       >
-        <UserAvatar class="w-10 h-10" :user="{name:user.name,id:user.id}" />
+        <UserAvatar
+          class="w-10 h-10"
+          :user="{ name: user.name, id: user.id }"
+        />
         <p class="text-xs over truncate text-center font-semibold" v-if="user">
           {{ user.name }}
         </p>
@@ -16,7 +21,13 @@
         :handlerFunction="toggleShowChannels"
       />
       <ChannelNavbarListItem
-      class="!fixed bottom-0"
+        itemTitle="Instaluj"
+        icon="download-app"
+        class=""
+        :handlerFunction="showInstallPrompt"
+      />
+      <ChannelNavbarListItem
+        class="!fixed bottom-0"
         itemTitle="Wyloguj"
         icon="sign-out"
         :handlerFunction="singOutUser"
@@ -52,6 +63,7 @@ export default {
     const user = computed(() => store.state.user);
     const showMenu = computed(() => store.state.showMenu);
     const showChannels = ref(true);
+    const deferredPrompt = ref(null);
     const singOutUser = async () => {
       try {
         const { error } = await supabase.auth.signOut();
@@ -67,12 +79,33 @@ export default {
         store.commit('toggleShowMenu');
       }
     };
+    const showInstallPrompt = async () => {
+      if (deferredPrompt.value !== null) {
+        deferredPrompt.value.prompt();
+        const { outcome } = await deferredPrompt.value.userChoice;
+        if (outcome === 'accepted') {
+          deferredPrompt.value = null;
+        }
+      }
+    };
+    const initBeforeInstallPrompt = () => {
+      window.addEventListener('beforeinstallprompt', (e) => {
+        deferredPrompt.value = e;
+      });
+    };
     const toggleShowChannels = () => {
       showChannels.value = !showChannels.value;
     };
     checkScreenWidth();
-    return { user, singOutUser, showChannels, showMenu, toggleShowChannels };
+    initBeforeInstallPrompt();
+    return {
+      user,
+      singOutUser,
+      showChannels,
+      showMenu,
+      toggleShowChannels,
+      showInstallPrompt,
+    };
   },
 };
 </script>
-

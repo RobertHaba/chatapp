@@ -18,6 +18,10 @@
     background-image: url('../icons/happy.svg');
 }
 
+.icon-download-app {
+    background-image: url('../icons/download-app.svg');
+}
+
 .icon-loading {
     background-image: url('../icons/loading.svg');
 }

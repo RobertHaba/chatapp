@@ -52,7 +52,6 @@ export default {
       }
     };
     const isNotEmptyMessage = () => {
-      console.log(newMessage.value.length);
       return newMessage.value.length > 0 ? true : false;
     };
     const checkFirstLetter = () => {
@@ -61,9 +60,8 @@ export default {
       }
     };
     const sendNewMessage = async () => {
-      console.log(props.channel.id);
       try {
-        const { data, error } = await supabase.from('Messages').insert({
+        const { error } = await supabase.from('Messages').insert({
           text: newMessage.value,
           channelID: props.channel.id,
           uid: user.id,
