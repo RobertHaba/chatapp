@@ -34,11 +34,15 @@
     background-image: url('../icons/jobs.png');
 }
 
+.icon-chat {
+    background-image: url('../icons/chat.svg');
+}
+
+.icon-close {
+    background-image: url('../icons/cross.svg');
+}
+
 .icon {
     background-position: center;
     background-size: 100%;
-}
-
-.icon-chat {
-    background-image: url('../icons/chat.svg');
 }

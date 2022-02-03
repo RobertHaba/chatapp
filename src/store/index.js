@@ -9,6 +9,7 @@ const store = createStore({
     subscribeMessages: {},
     showMenu: true,
     isMobileDevice: false,
+    isNewMessage: false,
   },
   mutations: {
     setUser(state, payload) {
@@ -34,7 +35,9 @@ const store = createStore({
           .concat(payload.messages)
           .reverse();
       } else if (payload.toEnd) {
-        state.messages[payload.channelID].data.unshift(...payload.messages.reverse())
+        state.messages[payload.channelID].data.unshift(
+          ...payload.messages.reverse()
+        );
       }
     },
     toggleShowMenu(state, payload) {
@@ -51,6 +54,9 @@ const store = createStore({
           userName[0].charAt(0).toUpperCase() + userName[0].slice(1);
         context.commit('setUser', payload);
       }
+    },
+    handlerIsNewMessage(context, payload) {
+      context.state.isNewMessage = payload;
     },
     createMessageObject(context, channels) {
       let newObject = {};

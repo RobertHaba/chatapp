@@ -4,7 +4,7 @@
     :class="[isUserMessage ? 'items-end' : 'items-start']"
   >
     <div
-      class="relative flex  w-fit gap-2"
+      class="relative flex w-fit gap-2"
       :class="[isUserMessage ? 'flex-row' : 'flex-row-reverse']"
     >
       <div
@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { computed, onMounted } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useStore } from 'vuex';
 import UserAvatar from './UserAvatar.vue';
 
@@ -51,18 +51,21 @@ export default {
   props: {
     message: Object,
     scrollToBottomFunction: Function,
+    isFromFirstGet: Boolean,
   },
   setup(props) {
     const store = useStore();
-    const user = store.state.user;
-    const isUserMessage = computed(() => user.id === props.message.uid);
+    const user = computed(()=>store.state.user);
+    const isUserMessage = user.value.id === props.message.uid
+    const isNewMessage = store.state.isNewMessage
     const time = computed(() => {
       const dateArray = props.message.time.split('T');
       const time = dateArray[1].split('.');
       return time[0];
     });
     onMounted(() => {
-      props.scrollToBottomFunction();
+      const isNewUserMsg = (isUserMessage && props.message.isNew)
+      props.scrollToBottomFunction(isNewUserMsg);
     });
     return { isUserMessage, user, time };
   },

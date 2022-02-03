@@ -111,11 +111,13 @@ export default {
               newMessageCount.value =
                 newMessageCount.value < 99 ? newMessageCount.value + 1 : '99+';
             }
+            payload.new.isNew=true
             lastestMessage.value = payload.new;
             store.commit('addMessageFromDB', {
               channelID: props.channel.id,
               message: payload.new,
             });
+            store.dispatch('handlerIsNewMessage', true);
             getLastActivity(true);
           })
           .subscribe();

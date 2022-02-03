@@ -1,17 +1,42 @@
 <template>
-  <div
-    class="h-[calc(100vh-8rem)] p-2 pb-14 sm:p-2 md:p-6 overflow-y-auto -translate-x-full slide-to-right"
-    id="chatBody"
-  >
-    <template v-for="message in messages" :key="message.id">
-      <ChatMessage
-        v-if="!loading"
-        :message="message"
-        :scrollToBottomFunction="scrollToBottom"
-      />
-    </template>
-    <div class="w-full h-full flex items-center justify-center" v-if="loading">
-      <span class="block icon icon-loading animate-spin h-10 w-10"></span>
+  <div class="relative">
+    <div
+      class="h-[calc(100vh-8rem)] p-2 pb-14 sm:p-2 md:p-6 overflow-y-auto -translate-x-full slide-to-right"
+      id="chatBody"
+    >
+      <template v-for="message in messages" :key="message.id">
+        <ChatMessage
+          v-if="!loading"
+          :message="message"
+          :isFromFirstGet="isFromFirstGet"
+          :scrollToBottomFunction="scrollToBottom"
+        />
+      </template>
+      <div
+        class="w-full h-full flex items-center justify-center"
+        v-if="loading"
+      >
+        <span class="block icon icon-loading animate-spin h-10 w-10"></span>
+      </div>
+    </div>
+    <div
+      class="fixed py-2 px-8 left-1/2 -translate-x-1/2 bottom-20 bg-vulcan text-gray rounded-lg text-sm flex gap-4"
+      v-if="isNewMessage && scrollProperty.isActive"
+    >
+      <button
+        @click="scrollToBottom(true), changeIsNewMessageToFalse"
+        class="transition-all h-6 w-32 hover:text-white hover:font-bold cursor-pointer"
+      >
+        Nowa wiadomość
+      </button>
+      <button
+        class="w-6 h-6 group flex justify-center items-center"
+        @click="changeIsNewMessageToFalse"
+      >
+        <i
+          class="block icon icon-close h-5 w-5 transition-all group-hover:rotate-180 group-hover:w-6 group-hover:h-6"
+        ></i>
+      </button>
     </div>
   </div>
 </template>
@@ -36,9 +61,15 @@ export default {
     const msgRange = ref({ start: 0, end: 15 });
     const loading = ref(true);
     const loadingMore = ref(false);
+    const isFromFirstGet = ref(true);
+    const isNewMessage = computed(() => store.state.isNewMessage);
     const chatBody = ref(null);
-    const scrollProperty = ref({ now: 0, last: 0 });
-    const getMessagesFromDB = async (getMore) => {
+    const scrollProperty = ref({
+      heightLast: 0,
+      heightNow: 0,
+      isActive: false,
+    });
+    const getMessagesFromDB = async (getMore = false) => {
       if (messagesFromStore.value.length < 1 || getMore) {
         console.log('Pobieram dane  z bazy - brak wiadomości w store');
         try {
@@ -54,6 +85,7 @@ export default {
             messages: data,
             toEnd: getMore,
           });
+          isFromFirstGet.value = !getMore;
         } catch (error) {
           console.log(error);
         }
@@ -65,8 +97,16 @@ export default {
       loading.value = false;
       messages.value = messagesFromStore.value;
     };
-    const scrollToBottom = () => {
-      chatBody.value.scrollTop = chatBody.value.scrollHeight;
+    const changeIsNewMessageToFalse = () => {
+      store.dispatch('handlerIsNewMessage', false);
+    };
+    const scrollToBottom = (isNewMsg = false) => {
+      if (isNewMsg || !scrollProperty.value.isActive) {
+        console.log('WORK');
+        chatBody.value.scrollTop = chatBody.value.scrollHeight;
+        scrollProperty.value.isActive = false;
+        changeIsNewMessageToFalse();
+      }
     };
     const handlerLoadMore = (loadMore) => {
       if (!loadMore) {
@@ -77,24 +117,31 @@ export default {
         const checkForDOMLoad = setInterval(() => {
           if (chatBody.value.children.length === messages.value.length) {
             chatBody.value.scrollTop =
-              scrollProperty.value.now - scrollProperty.value.last;
-            scrollProperty.value.last = scrollProperty.value.now;
+              scrollProperty.value.heightNow - scrollProperty.value.heightLast;
+            scrollProperty.value.heightLast = scrollProperty.value.heightNow;
             clearInterval(checkForDOMLoad);
           }
-        }, 50);
-        console.log(chatBody.value.scrollTop);
-        console.log(chatBody.value.scrollHeight);
+        }, 5);
       }
     };
     const watchForScrollToTop = () => {
       chatBody.value.addEventListener('scroll', (e) => {
-        if (e.target.scrollTop < 200) {
+        if (
+          e.target.scrollTop <
+          e.target.scrollHeight - e.target.offsetHeight - 50
+        ) {
+          console.log(scrollProperty.value.isActive);
+          scrollProperty.value.isActive = true;
+        } else {
+          console.log('ZMIANA');
+          scrollProperty.value.isActive = false;
+          console.log(scrollProperty.value.isActive);
+          changeIsNewMessageToFalse();
+        }
+        if (e.target.scrollTop < 100) {
           if (!loadingMore.value) {
-            console.log(e.target.scrollTop);
-            console.log(e.target.offsetHeight);
             loadingMore.value = true;
-            scrollProperty.value.now =
-              e.target.scrollHeight + e.target.scrollTop;
+            scrollProperty.value.heightNow = e.target.scrollHeight;
             loadMoreMessages();
           }
         }
@@ -119,7 +166,15 @@ export default {
       chatBody.value = document.querySelector('#chatBody');
       getMessagesFromDB();
     });
-    return { messages, scrollToBottom, loading };
+    return {
+      messages,
+      loading,
+      scrollToBottom,
+      isFromFirstGet,
+      scrollProperty,
+      isNewMessage,
+      changeIsNewMessageToFalse,
+    };
   },
 };
 </script>
