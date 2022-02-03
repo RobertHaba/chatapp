@@ -26,6 +26,10 @@
     background-image: url('../icons/design.png');
 }
 
+.icon-img-ads {
+    background-image: url('../icons/ads.png');
+}
+
 .icon-img-programming {
     background-image: url('../icons/programming.png');
 }

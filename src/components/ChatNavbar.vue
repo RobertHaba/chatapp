@@ -14,9 +14,8 @@
     <div class="flex flex-col h-full">
       <h3 class="flex items-center text-white font-bold text-sm gap-1">
         {{ channel.name }}
-        <span class="flex rounded-full w-2 h-2 bg-green"></span>
       </h3>
-      <p class="text-gray text-xs">Aktywny</p>
+      <p class="text-gray text-xs">{{channel.description}}</p>
     </div>
   </section>
 </template>
