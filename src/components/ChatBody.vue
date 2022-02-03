@@ -20,7 +20,7 @@
       </div>
     </div>
     <div
-      class="fixed py-2 px-8 left-1/2 -translate-x-1/2 bottom-20 bg-vulcan text-gray rounded-lg text-sm flex gap-4"
+      class="fixed py-2 px-8 w-60 inset-x-0 mx-auto bottom-20 bg-vulcan text-gray rounded-lg text-sm flex gap-4 translate-y-full slide-to-top"
       v-if="isNewMessage && scrollProperty.isActive"
     >
       <button

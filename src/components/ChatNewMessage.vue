@@ -6,7 +6,11 @@
     <button class="relative w-6 h-6" @click="showEmojiList = !showEmojiList">
       <i class="block icon icon-happy w-6 h-6 opacity-70"></i>
     </button>
-    <ChatNewMessageEmojiList v-if="showEmojiList" :addEmojiToTextHandler="addEmojiToText"/>
+    <ChatNewMessageEmojiList
+      v-if="showEmojiList"
+      :addEmojiToTextHandler="addEmojiToText"
+      :closeEmojiModal="closeEmojiModal"
+    />
     <textarea
       class="w-full resize-none h-full bg-mirage-200 text-white rounded-lg p-2 text-sm"
       maxlength="255"
@@ -29,7 +33,7 @@ import { useStore } from 'vuex';
 import ChatNewMessageEmojiList from './ChatNewMessageEmojiList.vue';
 
 export default {
-  components:{ChatNewMessageEmojiList},
+  components: { ChatNewMessageEmojiList },
   props: {
     channel: Object,
   },
@@ -80,13 +84,16 @@ export default {
         emoji +
         ' ' +
         newMessage.value.substring(caretStart);
-      showEmojiList.value = false
+      closeEmojiModal();
       setTimeout(() => {
         textareaMessage.focus();
         textareaMessage.selectionStart = caretStart + 3;
         textareaMessage.selectionEnd = caretStart + 3;
       }, 10);
       // Render caret position in textarea for Vue. setTimeout is important for caret work
+    };
+    const closeEmojiModal = () => {
+      showEmojiList.value = false;
     };
     return {
       handlerSendMessage,
@@ -96,6 +103,7 @@ export default {
       isMobileDevice,
       addEmojiToText,
       showEmojiList,
+      closeEmojiModal,
     };
   },
 };

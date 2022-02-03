@@ -5,9 +5,19 @@
     animation: 150ms slideToRight cubic-bezier(0.4, 0, 0.2, 1) forwards
 }
 
+.slide-to-top {
+    animation: 150ms slideToTop cubic-bezier(0.4, 0, 0.2, 1) forwards
+}
+
 @keyframes slideToRight {
     100% {
         transform: translateX(0);
+    }
+}
+
+@keyframes slideToTop {
+    100% {
+        transform: translateY(0);
     }
 }
 
