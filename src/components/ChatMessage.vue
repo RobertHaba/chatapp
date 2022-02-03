@@ -28,8 +28,8 @@
           <h4 class="text-xs text-gray" v-if="!isUserMessage">
             {{ message.user }}
           </h4>
-          <time class="text-xs text-gray" :datetime="message.time">{{
-            time
+          <time class="text-xs text-gray" :datetime="messageFormatedDate">{{
+            messageFormatedDate
           }}</time>
         </div>
       </div>
@@ -55,21 +55,36 @@ export default {
   },
   setup(props) {
     const store = useStore();
-    const user = computed(()=>store.state.user);
-    const isUserMessage = user.value.id === props.message.uid
-    const isNewMessage = store.state.isNewMessage
-    const time = computed(() => {
-      const dateArray = props.message.time.split('T');
-      const time = dateArray[1].split('.');
-      return time[0];
-    });
+    const user = computed(() => store.state.user);
+    const isUserMessage = user.value.id === props.message.uid;
+    const messageFormatedDate = ref();
+    const setMessageSendDate = () => {
+      const messageFullDate = new Date(props.message.time);
+      const messageTime = messageFullDate
+        .toLocaleTimeString('pl-PL')
+        .slice(0, -3);
+      const messageDate = messageFullDate.toLocaleDateString('pl-PL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+      const dateNow = new Date().toLocaleDateString('pl-PL', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      });
+      messageFormatedDate.value =
+        dateNow === messageDate
+          ? messageTime
+          : messageDate + ', ' + messageTime;
+    };
     onMounted(() => {
-      const isNewUserMsg = (isUserMessage && props.message.isNew)
+      const isNewUserMsg = isUserMessage && props.message.isNew;
       props.scrollToBottomFunction(isNewUserMsg);
+      setMessageSendDate();
     });
-    return { isUserMessage, user, time };
+    return { isUserMessage, user, messageFormatedDate };
   },
 };
 </script>
 
-<style lang="scss" scoped></style>

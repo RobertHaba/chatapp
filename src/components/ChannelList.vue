@@ -25,7 +25,6 @@ export default {
       try {
         const { data, error } = await supabase.from('Channels').select('*');
         if (error) throw error;
-        console.log(data);
         channels.value = data;
         setDefaultActiveChannel(data[0]);
         store.dispatch('createMessageObject',data)
@@ -34,7 +33,6 @@ export default {
       }
     };
     const setDefaultActiveChannel = (channel) => {
-      console.log('Działa');
       store.commit('changeActiveChannel', channel);
     };
     onMounted(() => {
