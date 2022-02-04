@@ -12,7 +12,7 @@
         :class="[isUserMessage ? 'flex-row-reverse justify-end' : '']"
       >
         <p
-          class="text-sm w-fit max-w-xs text-white p-4 bg-red rounded-lg h-min whitespace-pre-line break-words"
+          class="text-sm w-fit max-w-xs text-white p-4 bg-red rounded-lg h-min whitespace-pre-line break-all"
           :class="[
             isUserMessage
               ? 'rounded-tr-none bg-gradient-to-tr from-purple to-red'
