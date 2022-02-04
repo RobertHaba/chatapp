@@ -42,7 +42,6 @@ const store = createStore({
       }
     },
     toggleAllowNotification(state, payload) {
-      console.log(payload);
       state.allowNotifications = payload;
     },
     toggleAllowSound(state) {

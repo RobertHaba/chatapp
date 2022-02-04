@@ -58,7 +58,6 @@ export default {
       }
     };
     const notificationSongNewMessage = () => {
-      console.log('Play song');
       audioNewMessage.play();
     };
     watchEffect(() => {

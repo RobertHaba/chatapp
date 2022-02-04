@@ -114,7 +114,6 @@ export default {
     );
     // Function
     const handlerForm = () => {
-      console.log('asd');
       if (activeCard.value === 'signIn') {
         handlerLogin();
       } else if (activeCard.value === 'signUp') {
@@ -160,9 +159,6 @@ export default {
       }
     };
     const signUpUser = async () => {
-      console.log(user.value.name);
-      console.log(user.value.name + '@email.pl');
-      console.log(user.value.password);
       try {
         const { session, error } = await supabase.auth.signUp({
           email: user.value.name + '@email.pl',
