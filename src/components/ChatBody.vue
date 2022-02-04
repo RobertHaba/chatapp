@@ -109,7 +109,7 @@ export default {
     };
     const scrollToBottom = (isNewMsg = false) => {
       if (isNewMsg || !scrollProperty.value.isActive) {
-        console.log('WORK');
+        console.log('Scroll to bottom');
         chatBodyDOM.value.scrollTop = chatBodyDOM.value.scrollHeight;
         scrollProperty.value.isActive = false;
         changeIsNewMessageToFalse();
@@ -132,6 +132,7 @@ export default {
     };
     const watchForScrollMove = () => {
       chatBodyDOM.value.addEventListener('scroll', (e) => {
+        console.log(e.target.scrollTop);
         if (
           e.target.scrollTop <
           e.target.scrollHeight - e.target.offsetHeight - 50

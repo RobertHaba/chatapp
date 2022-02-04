@@ -8,7 +8,8 @@
       <p
         class="text-xs text-gray group-hover:text-white group-hover:font-semibold transition-all z-10"
       >
-        {{itemTitle}}
+        {{ itemTitle }}
+        <span class="block -mt-1 text-[0.6rem]" v-if="itemSubtitle">{{itemSubtitle}}</span>
       </p>
       <span
         class="absolute transition-all -left-2 bg-red w-1 h-10 rounded z-0 group-hover:w-16 group-hover:h-14"
@@ -19,14 +20,14 @@
 
 <script>
 export default {
-  props:{
-    itemTitle:String,
-    icon:String,
-    handlerFunction:Function
+  props: {
+    itemTitle: String,
+    icon: String,
+    handlerFunction: Function,
+    itemSubtitle:String
   },
   setup() {
     return {};
   },
 };
 </script>
-

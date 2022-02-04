@@ -42,7 +42,7 @@
 </template>
 
 <script>
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, nextTick  } from 'vue';
 import { useStore } from 'vuex';
 import UserAvatar from './UserAvatar.vue';
 
@@ -78,13 +78,16 @@ export default {
           ? messageTime
           : messageDate + ', ' + messageTime;
     };
-    onMounted(() => {
+
+    onMounted( () => {
       const isNewUserMsg = isUserMessage && props.message.isNew;
-      props.scrollToBottomFunction(isNewUserMsg);
+      nextTick(()=>{
+        props.scrollToBottomFunction(isNewUserMsg)
+      })
+      
       setMessageSendDate();
     });
     return { isUserMessage, user, messageFormatedDate };
   },
 };
 </script>
-

@@ -5,11 +5,14 @@ const store = createStore({
   state: {
     user: null,
     activeChannel: null,
+    newActiveChannel:null,
     messages: {},
     subscribeMessages: {},
     showMenu: true,
     isMobileDevice: false,
-    isNewMessage: {status:false,channel:null},
+    allowNotifications: false,
+    allowSound:true,
+    isNewMessage: { status: false, channel: null },
   },
   mutations: {
     setUser(state, payload) {
@@ -37,6 +40,13 @@ const store = createStore({
           ...payload.messages.reverse()
         );
       }
+    },
+    toggleAllowNotification(state, payload) {
+      console.log(payload);
+      state.allowNotifications = payload;
+    },
+    toggleAllowSound(state) {
+      state.allowSound = !state.allowSound;
     },
     toggleShowMenu(state, payload) {
       state.showMenu =
@@ -70,6 +80,10 @@ const store = createStore({
       );
       context.state.isMobileDevice = isMobile;
     },
+    getAudioAllowStatusFromLocalStorage(context){
+      const audioStatusFromLocalStorage = localStorage.getItem('allowAudio')
+      context.state.allowSound = (audioStatusFromLocalStorage === 'true')
+    }
   },
 });
 

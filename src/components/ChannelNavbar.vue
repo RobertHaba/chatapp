@@ -25,6 +25,18 @@
         icon="download-app"
         class=""
         :handlerFunction="showInstallPrompt"
+        v-if="deferredPrompt"
+      />
+      <ChannelNavbarListItem
+        itemTitle="Powiado."
+        :icon="notificationIcon"
+        :itemSubtitle="notificationSubtitle"
+        :handlerFunction="toggleAllowNotification"
+      />
+      <ChannelNavbarListItem
+        itemTitle="Audio"
+        :icon="soundIcon"
+        :handlerFunction="handlerToggleAllowSound"
       />
       <ChannelNavbarListItem
         class="!fixed bottom-0"
@@ -47,7 +59,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 import { supabase } from '../supabase/init';
@@ -62,6 +74,17 @@ export default {
     const router = useRouter();
     const user = computed(() => store.state.user);
     const showMenu = computed(() => store.state.showMenu);
+    const allowNotifications = computed(() => store.state.allowNotifications);
+    const allowSound = computed(() => store.state.allowSound);
+    const notificationSubtitle = computed(() =>
+      allowNotifications.value ? 'aktywne' : 'nieaktywne'
+    );
+    const notificationIcon = computed(() =>
+      allowNotifications.value ? 'ring-on' : 'ring-off'
+    );
+    const soundIcon = computed(() =>
+      allowSound.value ? 'volume-high' : 'volume-slash'
+    );
     const showChannels = ref(true);
     const deferredPrompt = ref(null);
     const singOutUser = async () => {
@@ -88,6 +111,21 @@ export default {
         }
       }
     };
+
+    const toggleAllowNotification = () => {
+      if (Notification.permission !== 'granted') {
+        Notification.requestPermission().then((res) => {
+          if (res === 'granted') {
+            store.commit('toggleAllowNotification', true);
+            toggleAllowInLocalStorage('allowNotification',true)
+          }
+        });
+      }
+      else{
+            store.commit('toggleAllowNotification', !allowNotifications.value);
+            toggleAllowInLocalStorage('allowNotification',allowNotifications.value)
+      }
+    };
     const initBeforeInstallPrompt = () => {
       window.addEventListener('beforeinstallprompt', (e) => {
         deferredPrompt.value = e;
@@ -96,8 +134,17 @@ export default {
     const toggleShowChannels = () => {
       showChannels.value = !showChannels.value;
     };
-    checkScreenWidth();
-    initBeforeInstallPrompt();
+    const handlerToggleAllowSound = () => {
+      store.commit('toggleAllowSound');
+      toggleAllowInLocalStorage('allowAudio',allowSound.value);
+    };
+    const toggleAllowInLocalStorage = (keyName,value) => {
+      localStorage.setItem(keyName, value);
+    };
+    onMounted(() => {
+      checkScreenWidth();
+      initBeforeInstallPrompt();
+    });
     return {
       user,
       singOutUser,
@@ -105,6 +152,12 @@ export default {
       showMenu,
       toggleShowChannels,
       showInstallPrompt,
+      deferredPrompt,
+      toggleAllowNotification,
+      handlerToggleAllowSound,
+      notificationSubtitle,
+      notificationIcon,
+      soundIcon,
     };
   },
 };

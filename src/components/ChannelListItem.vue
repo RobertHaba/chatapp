@@ -1,10 +1,8 @@
 <template>
-  <li
-    
-    @click="changeActiveChannel"
-    v-if="lastestMessage"
-  >
-    <button class="relative grid grid-cols-10 items-center w-full px-2 py-4 h-20 rounded-lg gap-1 shadow-md cursor-pointer group">
+  <li @click="changeActiveChannel" v-if="lastestMessage">
+    <button
+      class="relative grid grid-cols-10 items-center w-full px-2 py-4 h-20 rounded-lg gap-1 shadow-md cursor-pointer group"
+    >
       <UserAvatar
         class="col-span-2 z-10 w-10 h-10"
         :user="{ name: lastestMessage.user, id: lastestMessage.uid }"
@@ -59,7 +57,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref, watchEffect } from 'vue';
 import { useStore } from 'vuex';
 import { supabase } from '../supabase/init';
 import UserAvatar from './UserAvatar.vue';
@@ -71,9 +69,11 @@ export default {
   setup(props) {
     const store = useStore();
     const activeChannel = computed(() => store.state.activeChannel);
+    const user = computed(() => store.state.user);
     const lastestMessage = ref(null);
     const newMessageCount = ref(0);
     const intervalPassingTime = ref(null);
+    const allowNotifications = computed(() => store.state.allowNotifications);
     const time = ref(String);
     const getLastMessageFromDB = async () => {
       try {
@@ -93,7 +93,7 @@ export default {
             uid: 'Admin',
             user: 'Admin',
           };
-          time.value = null
+          time.value = null;
         }
       } catch (error) {
         console.log(error);
@@ -111,20 +111,48 @@ export default {
               newMessageCount.value =
                 newMessageCount.value < 99 ? newMessageCount.value + 1 : '99+';
             }
-            payload.new.isNew=true
+            payload.new.isNew = true;
             lastestMessage.value = payload.new;
             store.commit('addMessageFromDB', {
               channelID: props.channel.id,
               message: payload.new,
             });
-            store.dispatch('handlerIsNewMessage', {status:true, channel:props.channel.id});
+            store.dispatch('handlerIsNewMessage', {
+              status: true,
+              channel: props.channel.id,
+              messageID: lastestMessage.value.id,
+              uid: lastestMessage.value.uid,
+            });
             getLastActivity(true);
+            if (
+              lastestMessage.value.uid !== user.value.id &&
+              allowNotifications.value
+            ) {
+              pushNotiffication();
+            }
           })
           .subscribe();
         if (error) throw error;
       } catch (error) {
         console.log(error);
       }
+    };
+    const pushNotiffication = () => {
+      navigator.serviceWorker.getRegistration().then(function (reg) {
+        const options = {
+          body: lastestMessage.value.text,
+          icon: 'https://chatapp.haba.usermd.net/logo-512.png',
+          vibrate: [100, 50, 100],
+          data: {
+            dateOfArrival: Date.now(),
+            primaryKey: props.channel.id,
+            url: self.location.origin + '/' + props.channel.id,
+            badge: 'https://chatapp.haba.usermd.net/logo-512.png',
+            icon: 'https://chatapp.haba.usermd.net/logo-512.png',
+          },
+        };
+        reg.showNotification(lastestMessage.value.user, options);
+      });
     };
     const getLastActivity = (isMsgChange) => {
       if (isMsgChange) {
@@ -185,13 +213,13 @@ export default {
     const changeActiveChannel = () => {
       store.commit('changeActiveChannel', props.channel);
       newMessageCount.value = 0;
-      toggleShowMenu()
+      toggleShowMenu();
     };
-    const toggleShowMenu = ()=>{
-      if(window.innerWidth < 768){
-        store.commit('toggleShowMenu')
+    const toggleShowMenu = () => {
+      if (window.innerWidth < 768) {
+        store.commit('toggleShowMenu');
       }
-    }
+    };
     getLastMessageFromDB();
     subscribeToNewMessage();
     return {

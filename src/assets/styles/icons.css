@@ -22,6 +22,22 @@
     background-image: url('../icons/download-app.svg');
 }
 
+.icon-ring-on {
+    background-image: url('../icons/ring-on.svg');
+}
+
+.icon-ring-off {
+    background-image: url('../icons/ring-off.svg');
+}
+
+.icon-volume-high {
+    background-image: url('../icons/volume-high.svg');
+}
+
+.icon-volume-slash {
+    background-image: url('../icons/volume-slash.svg');
+}
+
 .icon-loading {
     background-image: url('../icons/loading.svg');
 }
