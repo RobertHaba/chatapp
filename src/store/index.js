@@ -5,16 +5,24 @@ const store = createStore({
   state: {
     user: null,
     activeChannel: null,
-    newActiveChannel:null,
+    newActiveChannel: null,
     messages: {},
     subscribeMessages: {},
     showMenu: true,
     isMobileDevice: false,
     allowNotifications: false,
-    allowSound:true,
+    allowSound: true,
     isNewMessage: { status: false, channel: null },
   },
   mutations: {
+    createUser(state,payload) {
+      if (payload) {
+        const userName = payload.email.split('@');
+        payload.name =
+          userName[0].charAt(0).toUpperCase() + userName[0].slice(1);
+          this.commit('setUser', payload);
+      }
+    },
     setUser(state, payload) {
       if (payload) {
         payload.name =
@@ -41,6 +49,15 @@ const store = createStore({
         );
       }
     },
+    createMessageObject(state, channels) {
+      let newObject = {};
+      channels.forEach((channel) => {
+        newObject[channel.id] = {
+          data: [],
+        };
+      });
+      state.messages = newObject;
+    },
     toggleAllowNotification(state, payload) {
       state.allowNotifications = payload;
     },
@@ -51,40 +68,21 @@ const store = createStore({
       state.showMenu =
         payload === true || payload === false ? payload : !state.showMenu;
     },
-  },
-  actions: {
-    createUser(context, payload) {
-      if (payload) {
-        const userName = payload.email.split('@');
-        payload.name =
-          userName[0].charAt(0).toUpperCase() + userName[0].slice(1);
-        context.commit('setUser', payload);
-      }
-    },
-    handlerIsNewMessage(context, payload) {
-      context.state.isNewMessage = payload;
-    },
-    createMessageObject(context, channels) {
-      let newObject = {};
-      channels.forEach((channel) => {
-        newObject[channel.id] = {
-          data: [],
-        };
-      });
-      context.state.messages = newObject;
-    },
-    chechIfIsMobileDevice(context) {
+    chechIfIsMobileDevice(state) {
       let isMobile = /iPhone|iPad|iPod|Android/i.test(
         navigator.userAgent.toLocaleLowerCase()
       );
-      context.state.isMobileDevice = isMobile;
+      state.isMobileDevice = isMobile;
     },
-    getAudioAllowStatusFromLocalStorage(context){
-      const audioStatusFromLocalStorage = localStorage.getItem('allowAudio')
-      context.state.allowSound = (audioStatusFromLocalStorage === 'true')
-    }
+    handlerIsNewMessage(state, payload) {
+      state.isNewMessage = payload;
+    },
+    getAudioAllowStatusFromLocalStorage(state) {
+      const audioStatusFromLocalStorage = localStorage.getItem('allowAudio');
+      state.allowSound = audioStatusFromLocalStorage === 'true';
+    },
   },
 });
 
-store.dispatch('createUser', supabase.auth.user());
+store.commit('createUser', supabase.auth.user());
 export default store;

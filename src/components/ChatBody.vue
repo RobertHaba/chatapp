@@ -111,7 +111,7 @@ export default {
       messages.value = messagesFromStore.value;
     };
     const changeIsNewMessageToFalse = () => {
-      store.dispatch('handlerIsNewMessage', false);
+      store.commit('handlerIsNewMessage', false);
     };
     const scrollToBottom = (isNewMsg = false) => {
       if (isNewMsg || !scrollProperty.value.isActive) {

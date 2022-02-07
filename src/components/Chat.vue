@@ -73,8 +73,8 @@ export default {
       }
     });
     onMounted(() => {
-      store.dispatch('chechIfIsMobileDevice');
-      store.dispatch('getAudioAllowStatusFromLocalStorage');
+      store.commit('chechIfIsMobileDevice');
+      store.commit('getAudioAllowStatusFromLocalStorage');
       history.pushState({}, null, '/');
       if (isMobileDevice.value) {
         addGestureSupport();

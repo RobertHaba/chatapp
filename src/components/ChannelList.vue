@@ -34,7 +34,7 @@ export default {
         setDefaultActiveChannel(
           channelFromNotification ? channelFromNotification : data[0]
         );
-        store.dispatch('createMessageObject', data);
+        store.commit('createMessageObject', data);
       } catch (error) {
         console.log(error);
       }

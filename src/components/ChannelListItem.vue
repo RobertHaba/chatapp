@@ -117,7 +117,7 @@ export default {
               channelID: props.channel.id,
               message: payload.new,
             });
-            store.dispatch('handlerIsNewMessage', {
+            store.commit('handlerIsNewMessage', {
               status: true,
               channel: props.channel.id,
               messageID: lastestMessage.value.id,
