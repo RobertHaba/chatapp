@@ -1,7 +1,19 @@
-# Vue 3 + Vite
+# Chat App - Porozmawiajmy
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+Chat App to aplikacja do wysyłania i odbierania wiadomości w trybie live, która jest napisana w **Vue 3** z wykorzystaniem Composition Api, **Vuex**, **Vue Router**, **Tailwind** i **Supabase**. 
 
-## Recommended IDE Setup
+##Konto testowe
+-**Login**: demo
+-**Hasło**: demo12
 
-- [VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar)
+##PWA
+Aplikacja jest zgoda z wytycznymi PWA, dzięki czemu istnieje możliwość instalacji apki na Windowsie i Androidzie.
+
+##Dodatki
+- **Obsługa gestów na mobile** - przesunięcie z lewej do prawej - otwiera menu, przesunięcie z prawej do lewej - zamyka menu, 
+- **Kontrola dźwięku** - klikając na ikonkę audio możesz włączyć/wyłączyć dźwięk powiadomień 
+- **Powiadomienia** - klikając na powiadomienia i udzielając dostęp, będziesz otrzymywał notyfikację systemowe
+- **Instalacja aplikacji** - klikając na przycisk zainstaluj, wywołasz okienko instalatora aplikacji
+
+  
+
