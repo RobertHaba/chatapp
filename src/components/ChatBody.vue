@@ -69,6 +69,7 @@ export default {
     const loadingMore = ref(false);
     const isMessagesFromFirstGet = ref(true);
     const isNewMessage = computed(() => store.state.isNewMessage);
+    const isMoreMessage = ref(true);
     const scrollProperty = ref({
       heightLast: 0,
       heightNow: 0,
@@ -78,7 +79,10 @@ export default {
     const chatBodyDOM = ref(null);
 
     const getMessagesFromDB = async (getMore = false) => {
-      if (messagesFromStore.value.length < 1 || getMore) {
+      if (
+        (messagesFromStore.value.length < 1 && isMoreMessage.value) ||
+        (getMore && isMoreMessage.value)
+      ) {
         try {
           const { data, error } = await supabase
             .from('Messages')
@@ -86,6 +90,7 @@ export default {
             .eq('channelID', props.channel.id)
             .order('time', { ascending: false })
             .range(msgRange.value.start, msgRange.value.end);
+          isMoreMessage.value = data.length > 15 ? true : false;
           if (error) throw error;
           store.commit('addMessagesFromDB', {
             channelID: props.channel.id,
@@ -97,7 +102,8 @@ export default {
           console.log(error);
         }
       }
-      handlerLoadMore(getMore);
+      const loadMore = isMoreMessage.value ? getMore : false;
+      handlerLoadMore(loadMore);
       setMessages();
     };
     const setMessages = () => {
@@ -121,8 +127,14 @@ export default {
         loadingMore.value = false;
         const checkForDOMLoad = setInterval(() => {
           if (chatBodyDOM.value.children.length === messages.value.length) {
-            chatBodyDOM.value.scrollTop =
-              scrollProperty.value.heightNow - scrollProperty.value.heightLast;
+            if (!isMoreMessage.value) {
+              chatBodyDOM.value.scrollTop = 0;
+            } else {
+              chatBodyDOM.value.scrollTop =
+                scrollProperty.value.heightNow -
+                scrollProperty.value.heightLast;
+            }
+
             scrollProperty.value.heightLast = scrollProperty.value.heightNow;
             clearInterval(checkForDOMLoad);
           }
@@ -131,6 +143,7 @@ export default {
     };
     const watchForScrollMove = () => {
       chatBodyDOM.value.addEventListener('scroll', (e) => {
+        console.log(e.target.scrollTop);
         if (
           e.target.scrollTop <
           e.target.scrollHeight - e.target.offsetHeight - 50
