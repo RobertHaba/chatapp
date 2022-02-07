@@ -54,21 +54,27 @@ export default {
       if (Notification.permission !== 'granted') {
         store.commit('toggleAllowNotification', false);
       } else {
-        store.commit('toggleAllowNotification', (localStorage.getItem('allowNotification') === 'true'));
+        store.commit(
+          'toggleAllowNotification',
+          localStorage.getItem('allowNotification') === 'true'
+        );
       }
     };
     const notificationSongNewMessage = () => {
       audioNewMessage.play();
     };
     watchEffect(() => {
-      if (newMessage.value.status && newMessage.value.uid !== user.value.id && allowSound.value ) {
+      if (
+        newMessage.value.status &&
+        newMessage.value.uid !== user.value.id &&
+        allowSound.value
+      ) {
         notificationSongNewMessage();
-        console.log('asda');
       }
     });
     onMounted(() => {
       store.dispatch('chechIfIsMobileDevice');
-      store.dispatch('getAudioAllowStatusFromLocalStorage')
+      store.dispatch('getAudioAllowStatusFromLocalStorage');
       history.pushState({}, null, '/');
       if (isMobileDevice.value) {
         addGestureSupport();
