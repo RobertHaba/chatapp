@@ -24,7 +24,7 @@ export default {
     closeEmojiModal: Function,
   },
   setup(props) {
-    const emojiList = ref(['😊', '😂', '👍', '❤️', '🥰', '😍']);
+    const emojiList = ref(['😊', '😂', '👍', '❤️', '🥰', '😍', '👋']);
     const clickOutside = (event) => {
       if (event.target.closest('#emojiModal') === null) {
         props.closeEmojiModal();

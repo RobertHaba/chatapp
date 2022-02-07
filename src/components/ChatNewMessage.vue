@@ -18,7 +18,7 @@
       v-model="newMessage"
       id="newMessageArea"
       @keypress.enter="handlerSendMessage"
-      @keyup="checkFirstLetter"
+      @keydown="checkFirstLetter"
     ></textarea>
     <button class="w-6 h-6" @click="handlerSendMessage">
       <i class="flex w-6 h-6 icon icon-send"></i>
@@ -44,6 +44,7 @@ export default {
     const showEmojiList = ref(false);
     const isShowMenuOpen = computed(() => store.state.showMenu);
     const isMobileDevice = computed(() => store.state.isMobileDevice);
+    const isMessageDelay = ref(false);
     const handlerSendMessage = (e) => {
       if (!e.shiftKey && isNotEmptyMessage() && !isMobileDevice.value) {
         sendNewMessage();
@@ -60,18 +61,31 @@ export default {
       }
     };
     const sendNewMessage = async () => {
-      try {
-        const { error } = await supabase.from('Messages').insert({
-          text: newMessage.value,
-          channelID: props.channel.id,
-          uid: user.id,
-          user: user.name,
-        });
-        if (error) throw error;
-        newMessage.value = '';
-      } catch (error) {
-        console.log(error);
+      if (!isMessageDelay.value) {
+        try {
+          const { error } = await supabase.from('Messages').insert({
+            text: newMessage.value,
+            channelID: props.channel.id,
+            uid: user.id,
+            user: user.name,
+          });
+          if (error) throw error;
+          newMessageDelay();
+          newMessage.value = '';
+        } catch (error) {
+          console.log(error);
+        }
       }
+    };
+    const newMessageDelay = () => {
+      let textareaMessage = document.getElementById('newMessageArea');
+      textareaMessage.disabled = true;
+      isMessageDelay.value = true;
+      setTimeout(() => {
+        isMessageDelay.value = false;
+        textareaMessage.disabled = false;
+        textareaMessage.focus();
+      }, 1000);
     };
     const addEmojiToText = (emoji) => {
       let textareaMessage = document.getElementById('newMessageArea');
@@ -106,5 +120,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss" scoped></style>

@@ -143,7 +143,6 @@ export default {
     };
     const watchForScrollMove = () => {
       chatBodyDOM.value.addEventListener('scroll', (e) => {
-        console.log(e.target.scrollTop);
         if (
           e.target.scrollTop <
           e.target.scrollHeight - e.target.offsetHeight - 50
