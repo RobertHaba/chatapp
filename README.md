@@ -11,7 +11,7 @@ Aplikacja jest zgoda z wytycznymi PWA, dzięki czemu istnieje możliwość insta
 -**Hasło**: demo12
 
 ## Live
-[a link](https://chatapp.haba.usermd.net/)
+[Live](https://chatapp.haba.usermd.net/)
   
 ## Dodatki
 - **Obsługa gestów na mobile** - przesunięcie z lewej do prawej - otwiera menu, przesunięcie z prawej do lewej - zamyka menu, 
