@@ -20,7 +20,7 @@
       </div>
     </div>
     <div
-      class="fixed py-2 px-8 w-60 inset-x-0 mx-auto bottom-20 bg-vulcan text-gray rounded-lg text-sm flex gap-4 translate-y-full slide-to-top"
+      class="fixed py-2 px-8 w-60 inset-x-0 mx-auto bottom-20 bg-vulcan text-gray dark:text-black rounded-lg text-sm flex gap-4 translate-y-full slide-to-top"
       v-if="
         isNewMessage.status &&
         isNewMessage.channel === channel.id &&
