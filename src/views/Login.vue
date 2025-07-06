@@ -160,18 +160,17 @@ export default {
     };
     const signUpUser = async () => {
       try {
-        const { session, error } = await supabase.auth.signUp({
+        const data = await supabase.auth.signUp({
           email: user.value.name + '@email.pl',
           password: user.value.password,
         });
-        if (error) throw error;
-        user.value.id = session.user.id;
+        if (data.error) throw data.error;
+        user.value.id = data.user.id;
         setUserInStore(user.value);
         setUserInLocalStorage(user.value);
         changeRouterToChatApp();
       } catch (error) {
         errorMessage.value = error.message;
-        console.log(error);
       }
     };
     const getUserFromLocalStorage = () => {
